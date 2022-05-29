@@ -13,6 +13,7 @@ const _mapConst = _curryr(_mapFunction);
 const _eachConst = _curryr(_eachFunction);
 const _filterConst = _curryr(_filterFunction);
 const _get = _curryr(function (object, key) {
+  // object[key] = key의 value
   return object == null ? undefined : object[key];
 });
 
@@ -89,6 +90,7 @@ function _is_object(object) {
 function _mapFunction(list, mapper) {
   const newList = [];
 
+  // _get("name")
   _eachFunction(list, function (value, key) {
     newList.push(mapper(value, key));
   });
