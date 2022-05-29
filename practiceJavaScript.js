@@ -8,9 +8,10 @@ const users = [
   { id: 7, name: "JI", age: 31 },
   { id: 8, name: "MP", age: 23 },
 ];
-const _map = _curryr(_map);
-const _each = _curryr(_each);
-const _filter = _curryr(_filter);
+
+const _mapConst = _curryr(_mapFunction);
+const _eachConst = _curryr(_eachFunction);
+const _filterConst = _curryr(_filterFunction);
 const _get = _curryr(function (object, key) {
   return object == null ? undefined : object[key];
 });
@@ -18,14 +19,13 @@ const _get = _curryr(function (object, key) {
 // go - filter - each - keys - is_object
 //
 
-
 // go(값, 계산함수, ..., 계산함수, 결과함수)
 _go(
   users,
-  _filter(function (user) {
+  _filterConst(function (user) {
     return user.age >= 30;
   }),
-  _map(_get("name")),
+  _mapConst(_get("name")),
   console.log
 );
 
@@ -37,18 +37,18 @@ function _go(argument) {
 }
 
 // list = users
-// number = _filter(function(users) {return user.age > 30;}
+// number = _filterA(function(users) {return user.age > 30;}
 function _rest(list, number) {
   const slice = Array.prototype.slice;
   return slice.call(list, number || 1);
 }
 
 // list = users
-// predicate = _filter(function (user) {return user.age >= 30;})
-function _filter(list, predicate) {
+// predicate = _filterA(function (user) {return user.age >= 30;})
+function _filterFunction(list, predicate) {
   const newList = [];
 
-  _each(list, function (value) {
+  _eachFunction(list, function (value) {
     if (predicate(value)) newList.push(value);
   });
 
@@ -57,7 +57,7 @@ function _filter(list, predicate) {
 
 // list = users
 // iterator = function (value) {if (predicate(value)) newList.push(value);}
-function _each(list, iterator) {
+function _eachFunction(list, iterator) {
   // keys = ["0", "1", ... ,"7"]
   let keys = _keys(list);
 
@@ -81,4 +81,54 @@ function _keys(object) {
 // object = users
 function _is_object(object) {
   return typeof object == "object" && !!object;
+}
+
+// map(callback(currentValue, index, map()을 호출한 array), thisArg)
+// thisArg = callback을 실행할 때 this로 사용되는 값. 객체겠지?
+// callback
+function _mapFunction(list, mapper) {
+  const newList = [];
+
+  _eachFunction(list, function (value, key) {
+    newList.push(mapper(value, key));
+  });
+
+  return newList;
+}
+
+function _curryr(fn) {
+  return function (a, b) {
+    return arguments.length == 2
+      ? fn(a, b)
+      : function (b) {
+          return fn(b, a);
+        };
+  };
+}
+
+function _pipe() {
+  let functions = arguments;
+
+  return function (argument) {
+    return _reduce(
+      functions,
+      function (argument, fn) {
+        return fn(argument);
+      },
+      argument
+    );
+  };
+}
+
+function _reduce(list, iterator, memo) {
+  if (arguments.length == 2) {
+    memo = list[0];
+    list = _rest(list);
+  }
+
+  _eachFunction(list, function (value) {
+    memo = iterator(memo, value);
+  });
+
+  return memo;
 }
