@@ -1,121 +1,34 @@
-const users = [
-  { id: 1, name: "ID", age: 36 },
-  { id: 2, name: "BJ", age: 32 },
-  { id: 3, name: "JM", age: 32 },
-  { id: 4, name: "PJ", age: 27 },
-  { id: 5, name: "HA", age: 25 },
-  { id: 6, name: "JE", age: 26 },
-  { id: 7, name: "JI", age: 31 },
-  { id: 8, name: "MP", age: 23 },
-];
-
-const _mapConst = _curryr(_mapFunction);
-const _eachConst = _curryr(_eachFunction);
-const _filterConst = _curryr(_filterFunction);
-const _get = _curryr(function (object, key) {
-  // object[key] = key의 value
-  return object == null ? undefined : object[key];
-});
-
-// go - filter - each - keys - is_object
-//
-
-// go(값, 계산함수, ..., 계산함수, 결과함수)
+// Worker
 _go(
   users,
-  _filterConst(function (user) {
-    return user.age >= 30;
+  _filter(function (user) {
+    return user.age > 29;
   }),
-  _mapConst(_get("name")),
+  _map(_get("name")),
   console.log
 );
 
-// argument = users
+// _go Logics
 function _go(argument) {
-  // arguments = users
   const functions = _rest(arguments);
+
   return _pipe.apply(null, functions)(argument);
 }
 
-// list = users
-// number = _filterA(function(users) {return user.age > 30;}
 function _rest(list, number) {
   const slice = Array.prototype.slice;
+
   return slice.call(list, number || 1);
 }
 
-// list = users
-// predicate = _filterA(function (user) {return user.age >= 30;})
-function _filterFunction(list, predicate) {
-  const newList = [];
-
-  _eachFunction(list, function (value) {
-    if (predicate(value)) newList.push(value);
-  });
-
-  return newList;
-}
-
-// list = users
-// iterator = function (value) {if (predicate(value)) newList.push(value);}
-function _eachFunction(list, iterator) {
-  // keys = ["0", "1", ... ,"7"]
-  let keys = _keys(list);
-
-  for (let i = 0, length = keys.length; i < length; i++) {
-    // list[key[i]] = {id: i, name: iname, age: iage}
-    iterator(list[keys[i]], keys[i]);
-  }
-
-  // list =
-  return list;
-}
-
-// users의 property를 반복하여 array 형태로 반환함.
-// object = users
-// Object.keys(object) = ["0", "1", ... ,"7"]
-function _keys(object) {
-  return _is_object(object) ? Object.keys(object) : [];
-}
-
-// TypeChecker
-// object = users
-function _is_object(object) {
-  return typeof object == "object" && !!object;
-}
-
-// map(callback(currentValue, index, map()을 호출한 array), thisArg)
-// thisArg = callback을 실행할 때 this로 사용되는 값. 객체겠지?
-// callback
-function _mapFunction(list, mapper) {
-  const newList = [];
-
-  // _get("name")
-  _eachFunction(list, function (value, key) {
-    newList.push(mapper(value, key));
-  });
-
-  return newList;
-}
-
-function _curryr(fn) {
-  return function (a, b) {
-    return arguments.length == 2
-      ? fn(a, b)
-      : function (b) {
-          return fn(b, a);
-        };
-  };
-}
-
 function _pipe() {
-  let functions = arguments;
+  const functions = arguments;
 
   return function (argument) {
     return _reduce(
       functions,
-      function (argument, fn) {
-        return fn(argument);
+      function (argument, 함수) {
+        return 함수(argument);
       },
       argument
     );
@@ -128,9 +41,89 @@ function _reduce(list, iterator, memo) {
     list = _rest(list);
   }
 
-  _eachFunction(list, function (value) {
+  _each(list, function (value) {
     memo = iterator(memo, value);
   });
 
   return memo;
 }
+
+function _each() {}
+
+// _filter Logics
+const _filter = _curryr(_filter);
+
+function _curryr(함수) {
+  return function (a, b) {
+    return arguments.length == 2
+      ? 함수(a, b)
+      : function (b) {
+          return 함수(b, a);
+        };
+  };
+}
+
+function _filter(list, predicate) {
+  const filteredList = [];
+
+  _each(list, function (value) {
+    if (predicate(value)) filteredList.push(value);
+  });
+
+  return filteredList;
+}
+
+function _each(list, iterator) {
+  const keys = _keys(list);
+
+  for (let i = 0; i < keys.length; i++) {
+    iterator(list[keys[i]], keys[i]);
+  }
+
+  return list;
+}
+
+function _keys(object) {
+  return _isObejct(object) ? Object.keys(object) : [];
+}
+
+function _isObejct(object) {
+  return typeof object == "object" && !!object;
+}
+
+// _map Logics
+const _map = _curryr(_map);
+
+// function _curryr() {}
+
+function _map(list, mapper) {
+  const mappedList = [];
+
+  _each(list, function (value, key) {
+    mappedList.push(mapper(value, key));
+  });
+
+  return mappedList;
+}
+
+const _get = _curryr(function (object, key) {
+  return object == null ? undefined : object[key];
+});
+
+// function _each() {}
+
+// function _keys() {}
+
+// function _isObejct() {}
+
+// Data
+const users = [
+  { id: 1, name: "ID", age: 36 },
+  { id: 2, name: "BJ", age: 32 },
+  { id: 3, name: "JM", age: 32 },
+  { id: 4, name: "PJ", age: 27 },
+  { id: 5, name: "HA", age: 25 },
+  { id: 6, name: "JE", age: 26 },
+  { id: 7, name: "JI", age: 31 },
+  { id: 8, name: "MP", age: 23 },
+];
