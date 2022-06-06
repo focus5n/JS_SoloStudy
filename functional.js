@@ -13,7 +13,7 @@ const users = [
 
 const curriedFilter = _curryr(_filter);
 const curriedMap = _curryr(_map);
-const curriedEach = _curryr(_each);
+const $curriedEach = _curryr(_each);
 const _get = _curryr(function (object, key) {
   return object == null ? undefined : object[key];
 });
@@ -21,14 +21,14 @@ const _get = _curryr(function (object, key) {
 
 // Start
 _go(
-  $users,
+  users,
   // 1. curryr 함수에 _filter 함수를 인수로 할당한 값을 리턴: f(b), b = f(user)
-  $curriedFilter(function (user) {
+  curriedFilter(function (user) {
     return user.age > 29;
   }),
   // 2. _curryr 함수에 _get("name") 함수를 인수로 할당한 값을 리턴 curriedMap( f(a, b) )
   // 3. _curryr 함수에 f(a,b) 함수를 인수로 할당한 값을 리턴 f(b), b = f(a, b`)
-  $curriedMap(_get("name")),
+  curriedMap(_get("name")),
   // f()
   console.log
 );
@@ -56,7 +56,7 @@ function _rest(list, number) {
   // [].slice는 함수를 반환하며, 모든 함수는 call method를 포함한다.
   // slice 함수는 원본 배열을 변경하지 않고, 새로운 배열 객체를 반환한다.
   // call method의 첫 인자로 list를 받아서 this에 list를 할당한다.
-  return [].slice.call(list, number || 1);
+  return slice.call(list, number || 1);
 }
 
 // 매개변수 없음
@@ -107,7 +107,7 @@ function _reduce(list, iterator, memo) {
   // iterator = value(memo)
   // memo = users
   // iterator = value(users)
-  _each(list, function(value) {
+  $curriedEach(list, function(value) {
 
     // iterator = function(argument, func)
     // memo = function(memo, value)
@@ -144,7 +144,7 @@ function _curryr(func) {
 function _filter(list, predicate) {
   const filteredList = [];
 
-  _each(list, function (value) {
+  $curriedEach(list, function (value) {
     if (predicate(value)) filteredList.push(value);
   });
 

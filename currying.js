@@ -13,7 +13,7 @@ const $get = _curryingReverse(function(object, key) {
 // _go(계산하길 원하는 정보, 걸러내길 원하는 조건, 가공하길 원하는 조건, 로그 출력)
 _go($users,
     $curriedFilter(function(user) {return user.age >= 30}),
-    $curriedMap(_get("name")),
+    $curriedMap($get("name")),
      console.log)
 
 // 데이터를 조건에 따라 걸러낸 결과값을 출력함.
@@ -60,19 +60,19 @@ function _curryingReverse(calculator) {
 }
 
 // 계산하길 원하는 정보를 list 배열로 받고, 원하는 조건이 담긴 함수를 iterator 함수로 받아서, 조건 함수 개수만큼 반복문을 실행함.
-function _each(list, iterator) {
-    const $keys = _key(list)
+function _each(conditions, executer) {
+    const $keys = _key(conditions)
 
     for(let index in $keys) {
-        iterator(list[index], index)
+        executer(conditions[index], index)
     }
 
-    return list
+    return conditions
 }
 
 // 정보가 담긴 something 객체의 key 값을 배열에 담아서 반환하고, 객체가 아니라면 빈 배열로 치환하여 반환함.
 function _key(something) {
-    return $isObject == true ? Object.keys[something] : []
+    return $isObject(something) == true ? Object.keys(something) : []
 }
 
 // 정보가 담긴 something 인자가 객체인지 확인하고, 객체가 맞다면 true 값을 반환하고, 객체가 아니라면 false 값을 반환함.
@@ -84,7 +84,7 @@ function $isObject(something) {
 function _filter(list, predicate) {
     const $filteredList = []
 
-    _each(list, function(value) {
+    $curriedEach(list, function(value) {
         if(predicate(value)) $filteredList.push(value)
     })
 
@@ -95,7 +95,7 @@ function _filter(list, predicate) {
 function _map(list, mapper) {
     const $mappedList = []
 
-    _each(list, function(value, key) {
+    $curriedEach(list, function(value, key) {
         $mappedList.push(mapper(value, key))
     })
 
