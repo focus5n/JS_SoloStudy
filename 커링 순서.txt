@@ -1,0 +1,20 @@
+1. $curriedFilter()
+2. $get()
+3. $curriedMap()
+
+4. _go()
+5. _rest()
+6. _pipe.apply()
+7. _pipe.apply()()
+
+8. _reduce()
+9. _each
+
+10. _key()
+11. _isObject()
+12. _key()
+
+13. for(let index in $keys) {}
+14. function(condition)
+15. function(data, condition)
+16. condition(data)
